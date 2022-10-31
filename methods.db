@@ -1,36 +1,329 @@
-mongosh
-
-/* Current Mongosh Log ID:	635b05bc0c15b8acd04247cb
-Connecting to:		mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.6.0
-Using MongoDB:		5.0.11
-Using Mongosh:		1.6.0
-
-For mongosh info see: https://docs.mongodb.com/mongodb-shell/
-
-------
-   The server generated these startup warnings when booting
-   2022-10-26T20:15:06.074-03:00: Access control is not enabled for the database. Read and write access to data and configuration is unrestricted
-------
-
-------
-   Enable MongoDB's free cloud-based monitoring service, which will then receive and display
-   metrics about your deployment (disk utilization, CPU, operation statistics, e
-platzi-db> db */
+Connect to MongoDB
+Mongosh
 
 
-db.inventory.insertOne({ item: "canvas", qty: 100, tags:["cotton"], size: {h:28, w:35.5, uom: "cm"}})
+Use the created platzi database
+use platzi-db
 
-/*
- {
-    acknowledged: true,
-    insertedId: ObjectId("635b061a0c15b8acd04247cc")
-  }
-  platzi-db> db.inventory.findOne()
+
+The _id field if not added by us explicitly, MongoDB adds it for us as an ObjectId
+The _id field is mandatory in all documents.
+
+
+# Create
+
+db.inventory.insertOne(
+   { item: "canvas", qty: 100, tags: ["cotton"], size: { h: 28, w: 35.5, uom: "cm" } }
+)
+db.inventory.insertMany( [
+   { item: "canvas", qty: 100, size: { h: 28, w: 35.5, uom: "cm" }, status: "A" },
+   { item: "journal", qty: 25, size: { h: 14, w: 21, uom: "cm" }, status: "A" },
+   { item: "mat", qty: 85, size: { h: 27.9, w: 35.5, uom: "cm" }, status: "A" },
+   { item: "mousepad", qty: 25, size: { h: 19, w: 22.85, uom: "cm" }, status: "P" },
+   { item: "notebook", qty: 50, size: { h: 8.5, w: 11, uom: "in" }, status: "P" },
+   { item: "paper", qty: 100, size: { h: 8.5, w: 11, uom: "in" }, status: "D" },
+   { item: "planner", qty: 75, size: { h: 22.85, w: 30, uom: "cm" }, status: "D" },
+   { item: "postcard", qty: 45, size: { h: 10, w: 15.25, uom: "cm" }, status: "A" },
+   { item: "sketchbook", qty: 80, size: { h: 14, w: 21, uom: "cm" }, status: "A" },
+   { item: "sketch pad", qty: 95, size: { h: 22.85, w: 30.5, uom: "cm" }, status: "A" }
+] )
+
+db.inventory.insertOne(
+   { _id: "one", item: "canvas", qty: 100, tags: ["cotton"], size: { h: 28, w: 35.5, uom: "cm" } }
+)
+
+db.inventory.find( { item: "canvas" } )
+
+################################################## CONSOLE #################################################
+[
   {
     _id: ObjectId("635b061a0c15b8acd04247cc"),
     item: 'canvas',
     qty: 100,
     tags: [ 'cotton' ],
     size: { h: 28, w: 35.5, uom: 'cm' }
-  } 
-  */
+  },
+  {
+    _id: ObjectId("635b06f70c15b8acd04247cd"),
+    id: 'soy id',
+    item: 'canvas',
+    qty: 100,
+    tags: [ 'cotton' ],
+    size: { h: 28, w: 35.5, uom: 'cm' }
+  },
+  {
+    _id: ObjectId("635fe6f20c15b8acd04247ce"),
+    item: 'canvas',
+    qty: 100,
+    size: { h: 28, w: 35.5, uom: 'cm' },
+    status: 'A'
+  }
+]
+##########################################################################################################
+
+
+
+# atomicity, all write operations in MongoDB with document-level atomicity. 
+
+
+# Read 
+db.inventory.find( {} )
+
+################################################## CONSOLE #################################################
+
+[
+  {
+    _id: ObjectId("635b061a0c15b8acd04247cc"),
+    item: 'canvas',
+    qty: 100,
+    tags: [ 'cotton' ],
+    size: { h: 28, w: 35.5, uom: 'cm' }
+  },
+  {
+    _id: ObjectId("635b06f70c15b8acd04247cd"),
+    id: 'soy id',
+    item: 'canvas',
+    qty: 100,
+    tags: [ 'cotton' ],
+    size: { h: 28, w: 35.5, uom: 'cm' }
+  },
+  {
+    _id: ObjectId("635fe6f20c15b8acd04247ce"),
+    item: 'canvas',
+    qty: 100,
+    size: { h: 28, w: 35.5, uom: 'cm' },
+    status: 'A'
+  },
+  {
+    _id: ObjectId("635fe6f20c15b8acd04247cf"),
+    item: 'journal',
+    qty: 25,
+    size: { h: 14, w: 21, uom: 'cm' },
+    status: 'A'
+  },
+  {
+    _id: ObjectId("635fe6f20c15b8acd04247d0"),
+    item: 'mat',
+    qty: 85,
+    size: { h: 27.9, w: 35.5, uom: 'cm' },
+    status: 'A'
+  },
+  {
+    _id: ObjectId("635fe6f20c15b8acd04247d1"),
+    item: 'mousepad',
+    qty: 25,
+    size: { h: 19, w: 22.85, uom: 'cm' },
+    status: 'P'
+  },
+  {
+    _id: ObjectId("635fe6f20c15b8acd04247d2"),
+    item: 'notebook',
+    qty: 50,
+    size: { h: 8.5, w: 11, uom: 'in' },
+    status: 'P'
+  },
+  {
+    _id: ObjectId("635fe6f20c15b8acd04247d3"),
+    item: 'paper',
+    qty: 100,
+    size: { h: 8.5, w: 11, uom: 'in' },
+    status: 'D'
+  },
+  {
+    _id: ObjectId("635fe6f20c15b8acd04247d4"),
+    item: 'planner',
+    qty: 75,
+    size: { h: 22.85, w: 30, uom: 'cm' },
+    status: 'D'
+  },
+  {
+    _id: ObjectId("635fe6f20c15b8acd04247d5"),
+    item: 'postcard',
+    qty: 45,
+    size: { h: 10, w: 15.25, uom: 'cm' },
+    status: 'A'
+  },
+  {
+    _id: ObjectId("635fe6f20c15b8acd04247d6"),
+    item: 'sketchbook',
+    qty: 80,
+    size: { h: 14, w: 21, uom: 'cm' },
+    status: 'A'
+  },
+  {
+    _id: ObjectId("635fe6f20c15b8acd04247d7"),
+    item: 'sketch pad',
+    qty: 95,
+    size: { h: 22.85, w: 30.5, uom: 'cm' },
+    status: 'A'
+  }
+]
+##########################################################################################################
+
+
+
+# Equality
+db.inventory.find( { status: "D" } )
+################################################## CONSOLE #################################################
+[
+  {
+    _id: ObjectId("635fe6f20c15b8acd04247d3"),
+    item: 'paper',
+    qty: 100,
+    size: { h: 8.5, w: 11, uom: 'in' },
+    status: 'D'
+  },
+  {
+    _id: ObjectId("635fe6f20c15b8acd04247d4"),
+    item: 'planner',
+    qty: 75,
+    size: { h: 22.85, w: 30, uom: 'cm' },
+    status: 'D'
+  }
+]
+##########################################################################################################
+
+
+# Operators
+db.inventory.find( 
+   { qty: { $gt: { $gt: 30 } }, 
+
+################################################## CONSOLE #################################################
+
+
+
+##########################################################################################################
+
+# AND condition
+db.inventory.find( { status: "A", qty: { $lt: 30 } } )
+
+
+################################################## CONSOLE #################################################
+[
+  {
+    _id: ObjectId("635fe6f20c15b8acd04247cf"),
+    item: 'journal',
+    qty: 25,
+    size: { h: 14, w: 21, uom: 'cm' },
+    status: 'A'
+  }
+]
+##########################################################################################################
+
+# OR condition with operator
+
+
+db.inventory.find( { $or: [ { status: "A" }, { qty: { $lt: 30 } } ] } ) 
+
+################################################## CONSOLE #################################################
+
+[
+  {
+    _id: ObjectId("635fe6f20c15b8acd04247ce"),
+    item: 'canvas',
+    qty: 100,
+    size: { h: 28, w: 35.5, uom: 'cm' },
+    status: 'A'
+  },
+  {
+    _id: ObjectId("635fe6f20c15b8acd04247cf"),
+    item: 'journal',
+    qty: 25,
+    size: { h: 14, w: 21, uom: 'cm' },
+    status: 'A'
+  },
+  {
+    _id: ObjectId("635fe6f20c15b8acd04247d0"),
+    item: 'mat',
+    qty: 85,
+    size: { h: 27.9, w: 35.5, uom: 'cm' },
+    status: 'A'
+  },
+  {
+    _id: ObjectId("635fe6f20c15b8acd04247d1"),
+    item: 'mousepad',
+    qty: 25,
+    size: { h: 19, w: 22.85, uom: 'cm' },
+    status: 'P'
+  },
+  {
+    _id: ObjectId("635fe6f20c15b8acd04247d5"),
+    item: 'postcard',
+    qty: 45,
+    size: { h: 10, w: 15.25, uom: 'cm' },
+    status: 'A'
+  },
+  {
+    _id: ObjectId("635fe6f20c15b8acd04247d6"),
+    item: 'sketchbook',
+    qty: 80,
+    size: { h: 14, w: 21, uom: 'cm' },
+    status: 'A'
+  },
+  {
+    _id: ObjectId("635fe6f20c15b8acd04247d7"),
+    item: 'sketch pad',
+    qty: 95,
+    size: { h: 22.85, w: 30.5, uom: 'cm' },
+    status: 'A'
+  }
+]
+
+##########################################################################################################
+
+# fetch the first document that meets the filter according to the natural order in which the documents are stored on disk
+db.inventory.findOne( { status: "A", qty: { $lt: 30 } } ) )
+
+
+# Update
+
+
+# UpdateOne
+db.inventory.updateOne(
+   { item: "paper" },
+   {
+     $set: { "size.uom": "cm", status: "P" },
+     $currentDate: { lastModified: true }
+   })
+# Update Many
+db.inventory.find({qty: {$lt: 50}})
+
+
+db.inventory.updateMany(
+   { "qty": { $lt: 50 } },
+   {
+     $set: { "size.uom": "in", status: "P" },
+     $currentDate: { lastModified: true }
+   }
+)
+
+
+db.inventory.find({qty: {$lt: 50}})
+
+
+# Replace a document and keep its _id
+db.inventory.find({item: {item: "paper"})
+
+
+db.inventory.replaceOne(
+   { item: "paper"},
+   { item: "paper", instock: [ { warehouse: "A", qty: 60 }, { warehouse: "B", qty: 40 } ] }
+)
+
+
+db.inventory.find({ item: "paper"})
+
+
+# ---------------------------------Delete-----------------------------
+db.inventory.find({status: "A"})
+# Delete many documents according to a filter
+db.inventory.deleteMany({ status : "A" })
+
+
+db.inventory.find({status: "D"})
+# Delete a document
+db.inventory.deleteOne( { status: "D" } )
+
+
+# Delete all the documents of a database
+db.inventory.deleteMany({})
